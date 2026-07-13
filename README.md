@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vault Auth App
 
-## Getting Started
+Next.js App Router project with a polished login page, shadcn/ui, and a simple JWT authentication system.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Login page at `/`
+- Protected dashboard at `/dashboard`
+- JWT auth via `jose` (HS256)
+- HttpOnly cookie session
+- Middleware route protection
+- Demo users for local testing
+- Quick notes (create / delete via API, persisted per user)
+- Tasks (create / toggle / delete via API, persisted per user)
+
+## Project structure
+
+```text
+src/
+  app/
+    page.tsx                 # Login (start route)
+    dashboard/page.tsx       # Protected page
+    api/
+      auth/
+        login/route.ts
+        logout/route.ts
+        me/route.ts
+      notes/
+        route.ts             # GET list, POST create
+        [id]/route.ts        # DELETE
+      tasks/
+        route.ts             # GET list, POST create
+        [id]/route.ts        # PATCH toggle, DELETE
+    layout.tsx
+    globals.css
+  components/
+    auth/
+      login-form.tsx
+      dashboard-view.tsx
+    dashboard/
+      notes-panel.tsx
+      tasks-panel.tsx
+    ui/                      # shadcn components
+  lib/
+    auth/                    # JWT, session, users, schemas
+    store/                   # JSON file store helpers
+  middleware.ts
+data/
+  store.json                 # local persisted notes/tasks (gitignored)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Demo credentials
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `demo@vault.app` / `password123`
+- `admin@vault.app` / `admin123`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Getting started
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Optional: set `JWT_SECRET` in `.env.local` for a custom signing key.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Auth API
 
-## Deploy on Vercel
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/login` | Sign in and set JWT cookie |
+| `POST` | `/api/auth/logout` | Clear JWT cookie |
+| `GET`  | `/api/auth/me` | Return current user from JWT |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes & tasks API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/notes` | List current user notes |
+| `POST` | `/api/notes` | Create a note `{ title, body }` |
+| `DELETE` | `/api/notes/:id` | Delete a note |
+| `GET` | `/api/tasks` | List current user tasks |
+| `POST` | `/api/tasks` | Create a task `{ title }` |
+| `PATCH` | `/api/tasks/:id` | Toggle completed |
+| `DELETE` | `/api/tasks/:id` | Delete a task |
