@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mcp_auth_server": {
+      "command": "npx",
+      "args": ["tsx", "mcp/index.ts"]
+    }
+  }
+}
